@@ -1,0 +1,6 @@
+name: qt-collab_env
+channels:
+  - conda-forge
+dependencies:
+  - pip
+  - qtpy
