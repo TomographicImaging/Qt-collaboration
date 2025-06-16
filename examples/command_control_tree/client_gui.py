@@ -124,9 +124,9 @@ class TreeDirScene(QGraphicsScene):
         self.max_indent = 0
         self.build_tree_recr(0, my_lst, 1, 0);
         print("self.max_indent =", self.max_indent)
-        self.draw_tree()
+        self.draw_only_tree()
 
-    def draw_tree(self):
+    def draw_only_tree(self):
         self.clear()
         x_ini = 0
         self.box_width = self.max_indent * 65 + 135
@@ -200,16 +200,20 @@ class TreeDirScene(QGraphicsScene):
         node_numb = None
         min_d = None
         y_scale = self.row_height
-        for nod in self.tree_data_map:
-            y_up = (nod["my_row"] + 1.1) * y_scale
-            y_down = (nod["my_row"] + 2.1) * y_scale
-            if y_ms > y_up and y_ms <= y_down:
-                self.draw_tree()
-                print("touched node num:", nod["lin_num"])
-                self.addRect(
-                    0, y_up - 2, self.box_width, y_scale - 4,
-                    self.arrow_blue_pen, self.invisible_brush
-                )
+        try:
+            for nod in self.tree_data_map:
+                y_up = (nod["my_row"] + 1.1) * y_scale
+                y_down = (nod["my_row"] + 2.1) * y_scale
+                if y_ms > y_up and y_ms <= y_down:
+                    self.draw_only_tree()
+                    print("touched node num:", nod["lin_num"])
+                    self.addRect(
+                        0, y_up - 2, self.box_width, y_scale - 4,
+                        self.arrow_blue_pen, self.invisible_brush
+                    )
+        except AttributeError:
+            print("empty tree")
+
 
 
 class Form(QObject):
