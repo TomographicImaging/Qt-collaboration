@@ -1,6 +1,5 @@
 import subprocess, sys, shutil, os, glob
 
-
 def prin_lst(lst, curr):
     print("__________________________listing:")
     lst_stp = []
@@ -16,7 +15,6 @@ def prin_lst(lst, curr):
         stp_str += " nxt: "
         try:
             for nxt_uni in uni.next_step_list:
-
                 stp_str += "  " + str(nxt_uni.number)
 
         except:
@@ -221,6 +219,10 @@ class uni_step(object):
 class root_node(object):
     def __init__(self):
         self._run_dir = os.getcwd()
+        lof_file = open(self._run_dir + os.sep + "root_out.log", "w")
+        lof_file.write("root init file \n")
+        lof_file.close()
+        print("self._run_dir =", self._run_dir)
         self.number = 0
         self.command = [None]
         self.success = True
@@ -297,8 +299,7 @@ if __name__ == "__main__":
     uni_controler = runner()
     command = ""
     while command.strip() != 'exit':
-        # printing new list of steps
-        prin_lst(uni_controler.step_list, uni_controler.current)
+        #prin_lst(uni_controler.step_list, uni_controler.current)
 
         # showing tree
         print("________ showing steps tree:")
