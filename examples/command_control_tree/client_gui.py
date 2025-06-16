@@ -54,10 +54,10 @@ def draw_quadratic_bezier_3_points(
 
 class TreeDirScene(QGraphicsScene):
     tmp_off = '''
-    node_clicked_w_left = Signal(int)
     node_clicked_w_right = Signal(int)
     hide_clicked = Signal(int)
     '''
+    node_clicked_w_left = Signal(int)
     def __init__(self, parent = None):
         super(TreeDirScene, self).__init__(parent)
         self.setFont(QFont("Mono"))
@@ -204,13 +204,15 @@ class TreeDirScene(QGraphicsScene):
             for nod in self.tree_data_map:
                 y_up = (nod["my_row"] + 1.1) * y_scale
                 y_down = (nod["my_row"] + 2.1) * y_scale
-                if y_ms > y_up and y_ms <= y_down:
+                if y_ms >= y_up and y_ms < y_down:
                     self.draw_only_tree()
-                    print("touched node num:", nod["lin_num"])
+                    nod_lin_num = nod["lin_num"]
                     self.addRect(
                         0, y_up - 2, self.box_width, y_scale - 4,
                         self.arrow_blue_pen, self.invisible_brush
                     )
+                    self.node_clicked_w_left.emit(int(nod_lin_num))
+
         except AttributeError:
             print("empty tree")
 
@@ -222,20 +224,29 @@ class Form(QObject):
         ui_dir_path = os.path.dirname(os.path.abspath(__file__))
         ui_path = ui_dir_path + os.sep
         self.window = QtUiTools.QUiLoader().load(ui_path + "simple.ui")
+        self.req_qr = ""
+        self.tree_scene = TreeDirScene(self)
+        self.window.TreeGraphicsView.setScene(self.tree_scene)
+
         self.window.Button4Post.clicked.connect(self.clicked_4_post)
         self.window.LsButton.clicked.connect(self.clicked_ls)
         self.window.CatButton.clicked.connect(self.clicked_cat)
         self.window.EditPostRequestLine.textChanged.connect(self.new_req_txt)
-        self.req_qr = ""
-        self.tree_scene = TreeDirScene(self)
-        self.window.TreeGraphicsView.setScene(self.tree_scene)
+        self.tree_scene.node_clicked_w_left.connect(self.clicked_goto)
+
         self.window.show()
 
+    def clicked_goto(self, nod_lin_num):
+        print("... clicked on node:", nod_lin_num)
+        self.window.EditPostRequestLine.setText(str(nod_lin_num))
+
     def clicked_ls(self):
-        self.window.EditPostRequestLine.setText("ls")
+        prev_txt = str(self.window.EditPostRequestLine.text())
+        self.window.EditPostRequestLine.setText(prev_txt + " ls")
 
     def clicked_cat(self):
-        self.window.EditPostRequestLine.setText("cat")
+        prev_txt = str(self.window.EditPostRequestLine.text())
+        self.window.EditPostRequestLine.setText(prev_txt + " cat")
 
     def do_get(self):
         print("do_get")
