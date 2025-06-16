@@ -229,6 +229,9 @@ class root_node(object):
 
 class runner(object):
     def __init__(self):
+
+        os.mkdir("cmd_tree")
+        os.chdir("cmd_tree")
         root_ini = root_node()
         self.step_list = [root_ini]
         self.bigger_lin = 0
