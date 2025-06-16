@@ -202,7 +202,6 @@ class Form(QObject):
         self.window.Button4Get.clicked.connect(self.clicked_4_get)
         self.window.Button4Post.clicked.connect(self.clicked_4_post)
         self.window.EditPostRequestLine.textChanged.connect(self.new_req_txt)
-        #self.window.LogTextEdit
         self.req_qr = ""
         self.tree_scene = TreeDirScene(self)
         self.window.TreeGraphicsView.setScene(self.tree_scene)
@@ -221,11 +220,23 @@ class Form(QObject):
         print("time to do a http(Post) request with:", self.req_qr)
 
         full_cmd = {"message":self.req_qr}
-        req_post = requests.post(
-            "http://127.0.0.1:45678", data = json.dumps(full_cmd)
-        )
-        lst_out = req_post.content
-        print("lst_out =", json.loads(lst_out))
+        try:
+            req_post = requests.post(
+                "http://127.0.0.1:45678", data = json.dumps(full_cmd)
+            )
+            lst_out = req_post.content
+            self.window.LogTextEdit.appendPlainText(
+                str(json.loads(lst_out))
+            )
+            self.clicked_4_get()
+
+        except requests.exceptions.RequestException:
+            print("requests.exceptions.RequestException")
+            self.window.LogTextEdit.appendPlainText(
+                "Request Exception Error"
+            )
+
+
 
     def new_req_txt(self, new_txt):
         self.req_qr = str(new_txt)
