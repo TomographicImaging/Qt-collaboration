@@ -66,6 +66,7 @@ def build_dict_list(lst, curr):
     print(lst_stp)
     return lst_stp
 
+
 class show_tree(object):
     def __init__(self, uni_controler):
         self.lst_nodes = []
@@ -215,6 +216,8 @@ class uni_step(object):
 
         except FileExistsError:
             print("assuming the command should run in same dir")
+            self._run_dir = self._base_dir
+
 
 class root_node(object):
     def __init__(self):

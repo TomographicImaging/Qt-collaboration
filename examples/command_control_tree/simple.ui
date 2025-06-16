@@ -95,7 +95,7 @@
         <item>
          <widget class="QPushButton" name="Button4Post">
           <property name="text">
-           <string>Do Post</string>
+           <string>http Request / Run</string>
           </property>
          </widget>
         </item>

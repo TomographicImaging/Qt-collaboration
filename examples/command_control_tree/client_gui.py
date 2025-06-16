@@ -200,10 +200,8 @@ class Form(QObject):
         ui_path = ui_dir_path + os.sep
         self.window = QtUiTools.QUiLoader().load(ui_path + "simple.ui")
         self.window.Button4Post.clicked.connect(self.clicked_4_post)
-
         self.window.LsButton.clicked.connect(self.clicked_ls)
         self.window.CatButton.clicked.connect(self.clicked_cat)
-
         self.window.EditPostRequestLine.textChanged.connect(self.new_req_txt)
         self.req_qr = ""
         self.tree_scene = TreeDirScene(self)
@@ -227,7 +225,6 @@ class Form(QObject):
 
     def clicked_4_post(self):
         print("time to do a http(Post) request with:", self.req_qr)
-
         full_cmd = {"message":self.req_qr}
         try:
             req_post = requests.post(
