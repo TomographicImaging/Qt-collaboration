@@ -275,6 +275,8 @@ class Form(QObject):
             self.window.LogTextEdit.appendPlainText(
                 "Request Exception Error"
             )
+        except NameError:
+            print("NameError")
 
     def new_req_txt(self, new_txt):
         self.req_qr = str(new_txt)
