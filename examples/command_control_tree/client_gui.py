@@ -119,28 +119,29 @@ class TreeDirScene(QGraphicsScene):
 
     def draw_4_me(self, lst_out):
         my_lst = lst_out['Answer']
-        tot_hey = len(my_lst)
-        print("tot_hey =", tot_hey)
+        self.nod_lst_size = len(my_lst)
         self.tree_data_map = []
         self.max_indent = 0
         self.build_tree_recr(0, my_lst, 1, 0);
         print("self.max_indent =", self.max_indent)
+        self.draw_tree()
 
+    def draw_tree(self):
         self.clear()
         x_ini = 0
-        box_wit = self.max_indent * 140
+        self.box_width = self.max_indent * 65 + 135
         self.addRect(
-            x_ini - 10, 5,
-            box_wit + 20, self.row_height * (tot_hey  + 1),
+            x_ini - 10, 15,
+            self.box_width + 20, self.row_height * (self.nod_lst_size  + 1),
             self.gray_pen, self.first_gray_brush
         )
 
-        for row_num in range(1, tot_hey + 1, 2):
+        for row_num in range(1, self.nod_lst_size + 1, 2):
             print("row_num =", row_num)
             y_ini = row_num * self.row_height
             y_end = (row_num + 1) * self.row_height
             self.addRect(
-                x_ini, y_ini, box_wit, self.row_height,
+                x_ini, y_ini, self.box_width, self.row_height,
                 self.rectang_pen, self.another_gray_brush
             )
 
@@ -191,6 +192,24 @@ class TreeDirScene(QGraphicsScene):
             cmd_text.setBrush(self.font_brush)
 
         self.update()
+
+    def mouseReleaseEvent(self, event):
+        x_ms = event.scenePos().x()
+        y_ms = event.scenePos().y()
+        ms_b = event.button()
+        node_numb = None
+        min_d = None
+        y_scale = self.row_height
+        for nod in self.tree_data_map:
+            y_up = (nod["my_row"] + 1.1) * y_scale
+            y_down = (nod["my_row"] + 2.1) * y_scale
+            if y_ms > y_up and y_ms <= y_down:
+                self.draw_tree()
+                print("touched node num:", nod["lin_num"])
+                self.addRect(
+                    0, y_up - 2, self.box_width, y_scale - 4,
+                    self.arrow_blue_pen, self.invisible_brush
+                )
 
 
 class Form(QObject):
