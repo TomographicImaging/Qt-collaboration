@@ -2,7 +2,7 @@ from urllib.parse import urlparse, parse_qs
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import json
 
-from old_tree_nav import runner, prin_lst, show_tree, build_dict_list
+from tree_nav import runner, prin_lst, show_tree, build_dict_list
 
 """ The HTTP request handler """
 class RequestHandler(BaseHTTPRequestHandler):

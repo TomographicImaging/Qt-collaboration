@@ -222,7 +222,7 @@ class root_node(object):
         lof_file = open(self._run_dir + os.sep + "root_out.log", "w")
         lof_file.write("root init file \n")
         lof_file.close()
-        print("self._run_dir =", self._run_dir)
+        print("Root dir =", self._run_dir)
         self.number = 0
         self.command = [None]
         self.success = True
