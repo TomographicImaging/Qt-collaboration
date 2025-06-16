@@ -199,16 +199,25 @@ class Form(QObject):
         ui_dir_path = os.path.dirname(os.path.abspath(__file__))
         ui_path = ui_dir_path + os.sep
         self.window = QtUiTools.QUiLoader().load(ui_path + "simple.ui")
-        self.window.Button4Get.clicked.connect(self.clicked_4_get)
         self.window.Button4Post.clicked.connect(self.clicked_4_post)
+
+        self.window.LsButton.clicked.connect(self.clicked_ls)
+        self.window.CatButton.clicked.connect(self.clicked_cat)
+
         self.window.EditPostRequestLine.textChanged.connect(self.new_req_txt)
         self.req_qr = ""
         self.tree_scene = TreeDirScene(self)
         self.window.TreeGraphicsView.setScene(self.tree_scene)
         self.window.show()
 
-    def clicked_4_get(self):
-        print("clicked_4_get")
+    def clicked_ls(self):
+        self.window.EditPostRequestLine.setText("ls")
+
+    def clicked_cat(self):
+        self.window.EditPostRequestLine.setText("cat")
+
+    def do_get(self):
+        print("do_get")
         full_cmd = {"message":self.req_qr}
         req_get = requests.get(
             "http://127.0.0.1:45678", params = full_cmd
@@ -228,15 +237,13 @@ class Form(QObject):
             self.window.LogTextEdit.appendPlainText(
                 str(json.loads(lst_out))
             )
-            self.clicked_4_get()
+            self.do_get()
 
         except requests.exceptions.RequestException:
             print("requests.exceptions.RequestException")
             self.window.LogTextEdit.appendPlainText(
                 "Request Exception Error"
             )
-
-
 
     def new_req_txt(self, new_txt):
         self.req_qr = str(new_txt)

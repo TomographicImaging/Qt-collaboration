@@ -231,6 +231,12 @@ class root_node(object):
 
 class runner(object):
     def __init__(self):
+        try:
+            shutil.rmtree("cmd_tree")
+            print("\n removed cmd_tree dir to run program \n")
+
+        except FileNotFoundError:
+            print("no need to remove cmd_tree")
 
         os.mkdir("cmd_tree")
         os.chdir("cmd_tree")
