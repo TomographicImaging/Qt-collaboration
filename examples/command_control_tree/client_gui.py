@@ -199,22 +199,27 @@ class TreeDirScene(QGraphicsScene):
         ms_b = event.button()
         node_numb = None
         min_d = None
-        y_scale = self.row_height
         try:
             for nod in self.tree_data_map:
-                y_up = (nod["my_row"] + 1.1) * y_scale
-                y_down = (nod["my_row"] + 2.1) * y_scale
+                y_up = (nod["my_row"] + 1.1) * self.row_height
+                y_down = (nod["my_row"] + 2.1) * self.row_height
                 if y_ms >= y_up and y_ms < y_down:
-                    self.draw_only_tree()
-                    nod_lin_num = nod["lin_num"]
-                    self.addRect(
-                        0, y_up - 2, self.box_width, y_scale - 4,
-                        self.arrow_blue_pen, self.invisible_brush
-                    )
-                    self.node_clicked_w_left.emit(int(nod_lin_num))
+                    self.node_clicked_w_left.emit(int(nod["lin_num"]))
 
         except AttributeError:
-            print("empty tree")
+            print("AttributeError(mouseReleaseEvent)")
+
+    def draw_cursor_only(self, nod_lin_num):
+        try:
+            for nod in self.tree_data_map:
+                if nod["lin_num"] == nod_lin_num:
+                    y_up = (nod["my_row"] + 1.1) * self.row_height
+                    self.addRect(
+                        0, y_up - 2, self.box_width, self.row_height - 4,
+                        self.arrow_blue_pen, self.invisible_brush
+                    )
+        except AttributeError:
+            print("AttributeError(draw_cursor_only)")
 
 
 
@@ -237,16 +242,16 @@ class Form(QObject):
         self.window.show()
 
     def clicked_goto(self, nod_lin_num):
-        print("... clicked on node:", nod_lin_num)
         self.window.EditPostRequestLine.setText(str(nod_lin_num))
+        print("clicked nod: ", nod_lin_num)
+        if self.clicked_4_post():
+            self.tree_scene.draw_cursor_only(nod_lin_num)
 
     def clicked_ls(self):
-        prev_txt = str(self.window.EditPostRequestLine.text())
-        self.window.EditPostRequestLine.setText(prev_txt + " ls")
+        self.window.EditPostRequestLine.setText("ls")
 
     def clicked_cat(self):
-        prev_txt = str(self.window.EditPostRequestLine.text())
-        self.window.EditPostRequestLine.setText(prev_txt + " cat")
+        self.window.EditPostRequestLine.setText("cat")
 
     def do_get(self):
         print("do_get")
@@ -269,14 +274,21 @@ class Form(QObject):
                 str(json.loads(lst_out))
             )
             self.do_get()
+            return True
 
         except requests.exceptions.RequestException:
             print("requests.exceptions.RequestException")
             self.window.LogTextEdit.appendPlainText(
                 "Request Exception Error"
             )
+            return False
+
         except NameError:
             print("NameError")
+            self.window.LogTextEdit.appendPlainText(
+                "Name Error"
+            )
+            return False
 
     def new_req_txt(self, new_txt):
         self.req_qr = str(new_txt)
