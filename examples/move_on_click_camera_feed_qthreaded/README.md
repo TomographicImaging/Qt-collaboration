@@ -6,8 +6,6 @@ I am developing a Qt GUI for a laser shaping system I've built at Diamond. A cor
 
 # The code for the QThread, with comments on what each bit is doing:
 
-'''
-
     class OAVThread(QtCore.QThread):
         ImageUpdate = QtCore.pyqtSignal(QtGui.QImage) # to emit the image to a widget on the GUI
     
@@ -100,11 +98,9 @@ I am developing a Qt GUI for a laser shaping system I've built at Diamond. A cor
         def stop(self):
             self.ThreadActive = False
             self.cap.release()
-'''
+
 
 # canvas and move mode for drawing on the feed or moving motors
-
-'''
 
     # this is connected to a radio button to move between the two modes
     
@@ -181,5 +177,3 @@ I am developing a Qt GUI for a laser shaping system I've built at Diamond. A cor
             print(points_list)
         else:
             print("No shapes to cut...")
-'''
-
