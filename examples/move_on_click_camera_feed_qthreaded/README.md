@@ -7,104 +7,107 @@ I am developing a Qt GUI for a laser shaping system I've built at Diamond. A cor
 # The code for the QThread, with comments on what each bit is doing:
 
 '''
-class OAVThread(QtCore.QThread):
-    ImageUpdate = QtCore.pyqtSignal(QtGui.QImage) # to emit the image to a widget on the GUI
 
-    def __init__(self):
-        super(OAVThread, self).__init__()
-        self.ThreadActive = False
-        self.zoomLevel = 1 # can change the digital zoom on the GUI, so need a way to account for this when drawing crosshairs etc.
-        self.beamX = beamX
-        self.beamY = beamY
-        self.line_width = line_width
-        self.line_spacing = line_spacing
-        self.line_color = line_color
-
-    def run(self):
-        self.ThreadActive = True
-        self.cap = cv.VideoCapture(OAVADDRESS)
-        while self.ThreadActive:
-            ret, frame = self.cap.read()
-            if self.ThreadActive and ret:
-                for i in range(beamX % line_spacing, frame.shape[1], line_spacing):
-                    cv.line(frame, (i, 0), (i, frame.shape[0]), line_color, line_width)
-                for i in range(beamY % line_spacing, frame.shape[0], line_spacing):
-                    cv.line(frame, (0, i), (frame.shape[1], i), line_color, line_width)
-                # this is drawing a crosshair where the laser beam centre is
-
-                cv.line(
-                    frame,
-                    (beamX - 20, beamY),  # bigness
-                    (beamX + 20, beamY),
-                    (0, 255, 0),  # color
-                    3,  # thickness
-                )
-                cv.line(
-                    frame,
-                    (beamX, beamY - 20),
-                    (beamX, beamY + 20),
-                    (0, 255, 0),
-                    3,
-                )
-
-                if self.zoomLevel != 1: # this handles changes in the digital zoom level
-                    new_width = int(frame.shape[1] / self.zoomLevel)
-                    new_height = int(frame.shape[0] / self.zoomLevel)
-
-                    x1 = max(self.beamX - new_width // 2, 0)
-                    y1 = max(self.beamY - new_height // 2, 0)
-                    x2 = min(self.beamX + new_width // 2, frame.shape[1])
-                    y2 = min(self.beamY + new_height // 2, frame.shape[0])
-
-                    x1, x2 = self.adjust_roi_boundaries(
-                        x1, x2, frame.shape[1], new_width
+    class OAVThread(QtCore.QThread):
+        ImageUpdate = QtCore.pyqtSignal(QtGui.QImage) # to emit the image to a widget on the GUI
+    
+        def __init__(self):
+            super(OAVThread, self).__init__()
+            self.ThreadActive = False
+            self.zoomLevel = 1 # can change the digital zoom on the GUI, so need a way to account for this when drawing crosshairs etc.
+            self.beamX = beamX
+            self.beamY = beamY
+            self.line_width = line_width
+            self.line_spacing = line_spacing
+            self.line_color = line_color
+    
+        def run(self):
+            self.ThreadActive = True
+            self.cap = cv.VideoCapture(OAVADDRESS)
+            while self.ThreadActive:
+                ret, frame = self.cap.read()
+                if self.ThreadActive and ret:
+                    for i in range(beamX % line_spacing, frame.shape[1], line_spacing):
+                        cv.line(frame, (i, 0), (i, frame.shape[0]), line_color, line_width)
+                    for i in range(beamY % line_spacing, frame.shape[0], line_spacing):
+                        cv.line(frame, (0, i), (frame.shape[1], i), line_color, line_width)
+                    # this is drawing a crosshair where the laser beam centre is
+    
+                    cv.line(
+                        frame,
+                        (beamX - 20, beamY),  # bigness
+                        (beamX + 20, beamY),
+                        (0, 255, 0),  # color
+                        3,  # thickness
                     )
-                    y1, y2 = self.adjust_roi_boundaries(
-                        y1, y2, frame.shape[0], new_height
+                    cv.line(
+                        frame,
+                        (beamX, beamY - 20),
+                        (beamX, beamY + 20),
+                        (0, 255, 0),
+                        3,
                     )
-
-                    cropped_frame = frame[y1:y2, x1:x2]
-
-                    frame = cv.resize(cropped_frame, (frame.shape[1], frame.shape[0]))
-
-                rgbImage = cv.cvtColor(
-                    frame, cv.COLOR_BGR2RGB
-                )  
-                convertToQtFormat = QtGui.QImage(
-                    rgbImage.data,
-                    rgbImage.shape[1],
-                    rgbImage.shape[0],
-                    QtGui.QImage.Format_RGB888,
-                )
-                p = convertToQtFormat
-                p = convertToQtFormat.scaled(
-                    display_width, display_height, QtCore.Qt.KeepAspectRatio
-                ) 
-                self.ImageUpdate.emit(p)
-
-    def adjust_roi_boundaries(self, start, end, max_value, window_size):
-        if start < 0:
-            end -= start
-            start = 0
-        if end > max_value:
-            start -= end - max_value
-            end = max_value
-        if (end - start) < window_size and (start + window_size) <= max_value:
-            end = start + window_size
-        return start, end
-
-    def setZoomLevel(self, zoomLevel):
-        self.zoomLevel = zoomLevel 
-
-    def stop(self):
-        self.ThreadActive = False
-        self.cap.release()
+    
+                    if self.zoomLevel != 1: # this handles changes in the digital zoom level
+                        new_width = int(frame.shape[1] / self.zoomLevel)
+                        new_height = int(frame.shape[0] / self.zoomLevel)
+    
+                        x1 = max(self.beamX - new_width // 2, 0)
+                        y1 = max(self.beamY - new_height // 2, 0)
+                        x2 = min(self.beamX + new_width // 2, frame.shape[1])
+                        y2 = min(self.beamY + new_height // 2, frame.shape[0])
+    
+                        x1, x2 = self.adjust_roi_boundaries(
+                            x1, x2, frame.shape[1], new_width
+                        )
+                        y1, y2 = self.adjust_roi_boundaries(
+                            y1, y2, frame.shape[0], new_height
+                        )
+    
+                        cropped_frame = frame[y1:y2, x1:x2]
+    
+                        frame = cv.resize(cropped_frame, (frame.shape[1], frame.shape[0]))
+    
+                    rgbImage = cv.cvtColor(
+                        frame, cv.COLOR_BGR2RGB
+                    )  
+                    convertToQtFormat = QtGui.QImage(
+                        rgbImage.data,
+                        rgbImage.shape[1],
+                        rgbImage.shape[0],
+                        QtGui.QImage.Format_RGB888,
+                    )
+                    p = convertToQtFormat
+                    p = convertToQtFormat.scaled(
+                        display_width, display_height, QtCore.Qt.KeepAspectRatio
+                    ) 
+                    self.ImageUpdate.emit(p)
+    
+        def adjust_roi_boundaries(self, start, end, max_value, window_size):
+            if start < 0:
+                end -= start
+                start = 0
+            if end > max_value:
+                start -= end - max_value
+                end = max_value
+            if (end - start) < window_size and (start + window_size) <= max_value:
+                end = start + window_size
+            return start, end
+    
+        def setZoomLevel(self, zoomLevel):
+            self.zoomLevel = zoomLevel 
+    
+        def stop(self):
+            self.ThreadActive = False
+            self.cap.release()
 '''
 
 # canvas and move mode for drawing on the feed or moving motors
 
 '''
+
     # this is connected to a radio button to move between the two modes
+    
     def toggleCanvasMode(self, mode):
         if mode == "move":
             self.canvasMode = "move"
