@@ -18,6 +18,11 @@ except ModuleNotFoundError:
 def draw_quadratic_bezier_3_points(
         scene_obj, p1x, p1y, p2x, p2y, p3x, p3y, lin_pen
 ):
+    '''
+    draws a curve from given coordinates of 3 points in
+    the QGraphicsScene given as scene_obj using
+    the QPen given as lin_pen
+    '''
     curv_p1x = p1x
     curv_p1y = p1y
     curv_p2x = p2x
@@ -53,6 +58,12 @@ def draw_quadratic_bezier_3_points(
 
 
 class TreeDirScene(QGraphicsScene):
+    '''
+    Draws, updates and manages the command tree.
+
+    the method << build_tree_recurs >> needs to be recursive if we
+    want a tree with as many ramifications as the user wants
+    '''
     node_clicked_w_left = Signal(int)
     def __init__(self, parent = None):
         super(TreeDirScene, self).__init__(parent)
@@ -62,9 +73,7 @@ class TreeDirScene(QGraphicsScene):
         self.f_height = fm_rect.height()
 
         self.row_height = self.f_height * 1.5
-
-        print("self.f_height =", self.f_height)
-
+        print("font height =", self.f_height)
         self.gray_pen = QPen(
             Qt.gray, 2, Qt.SolidLine, Qt.RoundCap, Qt.RoundJoin
         )
@@ -80,7 +89,7 @@ class TreeDirScene(QGraphicsScene):
         )
         self.font_brush = QBrush(Qt.blue, Qt.SolidPattern)
 
-    def build_tree_recr(self, pos_num, my_lst, indent = 1, parent_row = 0):
+    def build_tree_recurs(self, pos_num, my_lst, indent = 1, parent_row = 0):
         step = my_lst[pos_num]
         stp_suss = ""
         if step["success"] == True:
@@ -106,7 +115,7 @@ class TreeDirScene(QGraphicsScene):
         try:
             print("step =", step)
             for new_pos in step["nxt"]:
-                self.build_tree_recr(
+                self.build_tree_recurs(
                     new_pos, my_lst, indent + 1, step_map["my_row"]
                 )
 
@@ -118,7 +127,7 @@ class TreeDirScene(QGraphicsScene):
         self.nod_lst_size = len(my_lst)
         self.tree_data_map = []
         self.max_indent = 0
-        self.build_tree_recr(0, my_lst, 1, 0);
+        self.build_tree_recurs(0, my_lst, 1, 0);
         print("self.max_indent =", self.max_indent)
         self.draw_only_tree()
 
@@ -220,6 +229,15 @@ class TreeDirScene(QGraphicsScene):
 
 
 class Form(QObject):
+    '''
+    controls the behaviour of the main window, including its own
+    events and the click/goto signal coming from the << tree_scene >>
+
+    The user can do a left click on any node of the tree
+    to launch a << goto >> http request. By clicking on the buttons
+    in the main window can be launched other http requests or modify
+    the next http request
+    '''
     def __init__(self, parent = None):
         super(Form, self).__init__(parent)
         ui_dir_path = os.path.dirname(os.path.abspath(__file__))
@@ -290,8 +308,12 @@ class Form(QObject):
         self.req_qr = str(new_txt)
 
 
-if __name__ == '__main__':
+def main():
     app = QApplication(sys.argv)
     form = Form()
     sys.exit(app.exec_())
+
+
+if __name__ == '__main__':
+    main()
 
