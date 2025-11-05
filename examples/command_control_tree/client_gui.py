@@ -53,10 +53,6 @@ def draw_quadratic_bezier_3_points(
 
 
 class TreeDirScene(QGraphicsScene):
-    tmp_off = '''
-    node_clicked_w_right = Signal(int)
-    hide_clicked = Signal(int)
-    '''
     node_clicked_w_left = Signal(int)
     def __init__(self, parent = None):
         super(TreeDirScene, self).__init__(parent)
