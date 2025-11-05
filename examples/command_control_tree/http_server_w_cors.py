@@ -7,6 +7,16 @@ from tree_nav import runner, prin_lst, show_tree, build_dict_list
 """ The HTTP request handler """
 class RequestHandler(BaseHTTPRequestHandler):
 
+    '''
+    connects http requests with the only instance of << runner >>.
+    side of the control tree.
+
+    The method << _send_cors_headers >> should be called before every
+    http response if we want this server to be compliant with modern
+    web browsers that enforce the << cross origin resource sharing >>
+    rules
+    '''
+
     def _send_cors_headers(self):
         ''' Sets headers required for CORS '''
         self.send_header("Access-Control-Allow-Origin", "*")
@@ -21,6 +31,7 @@ class RequestHandler(BaseHTTPRequestHandler):
         self.send_response(200)
         self._send_cors_headers()
         self.end_headers()
+        self.send_ok_dict()
 
     def send_ok_dict(self, str_out = "Ok"):
         response = {}
@@ -74,10 +85,6 @@ class RequestHandler(BaseHTTPRequestHandler):
             uni_controler.run(msg)
             prin_lst(uni_controler.step_list, uni_controler.current)
             print("-----------------------------------------------")
-            old_2_be_removed = '''show_tree(
-                step = uni_controler.step_list[0],
-                curr = uni_controler.current, indent = 1
-            )'''
             show_tree(uni_controler)
             self.send_ok_dict(msg)
 

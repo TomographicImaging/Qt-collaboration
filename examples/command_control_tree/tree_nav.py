@@ -1,6 +1,11 @@
 import subprocess, sys, shutil, os, glob
 
 def prin_lst(lst, curr):
+    '''
+    prints in console the tree that was formed by
+    << build_dict_list >> including pointing to the
+    position
+    '''
     print("__________________________listing:")
     lst_stp = []
     for uni in lst:
@@ -30,6 +35,11 @@ def prin_lst(lst, curr):
 
 
 def build_dict_list(lst, curr):
+    '''
+    builds the list that either is shown in console on the server side
+    or is sent back to the client. Here we handle format conversion more
+    that the logic of running commands and building the tree.
+    '''
     print(" - - - - - building list:")
     lst_stp = []
     for uni in lst:
@@ -130,6 +140,10 @@ class show_tree(object):
 
 
 def run_cmd(cmd_lst, run_dir):
+    '''
+    runs in << run_dir >> the command stored in << cmd_lst >>
+    returns in a list the console output and the status of the execution
+    '''
     lst_output = []
     lst_w_witch = list(cmd_lst)
     print("__________________________________\n << running >>", lst_w_witch)
