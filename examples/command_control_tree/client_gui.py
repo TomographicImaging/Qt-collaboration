@@ -62,7 +62,7 @@ class TreeDirScene(QGraphicsScene):
     Draws, updates and manages the command tree.
 
     the method << build_tree_recurs >> needs to be recursive if we
-    want a tree with as many ramifications as the user wants
+    want to show a tree with as many ramifications as the user wants
     '''
     node_clicked_w_left = Signal(int)
     def __init__(self, parent = None):
