@@ -2,7 +2,7 @@ from urllib.parse import urlparse, parse_qs
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import json
 
-from tree_nav import runner, prin_lst, show_tree, build_dict_list
+from tree_nav import runner, show_tree, build_dict_list
 
 """ The HTTP request handler """
 class RequestHandler(BaseHTTPRequestHandler):
@@ -83,7 +83,6 @@ class RequestHandler(BaseHTTPRequestHandler):
         print("msg =", msg)
         if msg != "":
             uni_controler.run(msg)
-            prin_lst(uni_controler.step_list, uni_controler.current)
             print("-----------------------------------------------")
             show_tree(uni_controler)
             self.send_ok_dict(msg)
