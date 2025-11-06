@@ -1,39 +1,5 @@
 import subprocess, sys, shutil, os, glob
 
-def prin_lst(lst, curr):
-    '''
-    prints in console the tree that was formed by
-    << build_dict_list >> includes pointing to the
-    position
-    '''
-    print("__________________________listing:")
-    lst_stp = []
-    for uni in lst:
-        stp_str = str(uni.number) + " comm: " + str(uni.command)
-
-        try:
-            stp_str += " prev: " + str(uni.prev_step.number)
-
-        except:
-            stp_str += " prev: None"
-
-        stp_str += " nxt: "
-        try:
-            for nxt_uni in uni.next_step_list:
-                stp_str += "  " + str(nxt_uni.number)
-
-        except:
-            stp_str += "empty"
-
-        if curr == uni.number:
-            stp_str += "                           <<< here I am <<<"
-
-        lst_stp.append(stp_str)
-
-    print(lst_stp)
-    return lst_stp
-
-
 def build_dict_list(lst, curr):
     '''
     builds the list that either is shown in console on the server side
@@ -54,16 +20,12 @@ def build_dict_list(lst, curr):
         try:
             step_dict["prev_step"] = int(uni.prev_step.number)
 
-        except:
+        except AttributeError:
             step_dict["prev_step"] = None
 
         nxt_lst = []
-        try:
-            for nxt_uni in uni.next_step_list:
-                nxt_lst.append(int(nxt_uni.number))
-
-        except:
-            pass
+        for nxt_uni in uni.next_step_list:
+            nxt_lst.append(int(nxt_uni.number))
 
         step_dict["nxt"] = nxt_lst
 
@@ -121,11 +83,7 @@ class show_tree(object):
         str_lin_num = "{:3}".format(step.number)
 
         stp_prn += str_lin_num + "     " * indent + " \__"
-        try:
-            stp_prn += "(" + str(step.command[0]) + ")"
-
-        except:
-            stp_prn += "None"
+        stp_prn += "(" + str(step.command[0]) + ")"
 
         if step.number == curr:
             stp_prn += "            <<< here "
@@ -138,16 +96,11 @@ class show_tree(object):
         }
         self.lst_nodes.append(step_node)
 
-        try:
-            for line in step.next_step_list:
-                self.build_recursive_list(
-                    step = line, curr = curr,
-                    indent = indent + 1, parent_row = my_row
-                )
-
-        except:
-            #print("last indent =", indent)
-            pass
+        for line in step.next_step_list:
+            self.build_recursive_list(
+                step = line, curr = curr,
+                indent = indent + 1, parent_row = my_row
+            )
 
 
 def run_cmd(cmd_lst, run_dir):
@@ -300,9 +253,6 @@ class runner(object):
             if cmd_lst[0] == "goto":
                 self.goto(int(cmd_lst[1]))
 
-            elif cmd_lst[0] == "slist":
-                self.slist()
-
             elif cmd_lst[0].isdigit():
                 print("Should go to line", int(cmd_lst[0]))
                 self.goto(int(cmd_lst[0]))
@@ -314,6 +264,9 @@ class runner(object):
 
         except IndexError:
             print("\n empty command \n")
+
+        except ValueError:
+            print("\n invalid row for goto \n")
 
     def exec_step(self, cmd_lst):
         print("self.current =", self.current)
@@ -332,29 +285,14 @@ class runner(object):
         self.step_list.append(new_step)
         self.goto(new_step.number)
 
-    def goto_prev(self):
-        print("forking")
-        try:
-            self.goto(self.step_list[self.current].prev_step.number)
-
-        except:
-            print("can NOT fork <None> node ")
-
     def goto(self, new_lin):
         if new_lin <= self.bigger_lin:
             self.current = new_lin
-
-    def slist(self):
-        print("printing in steps list mode: \n")
-        prin_lst(self.step_list, self.current)
-
 
 if __name__ == "__main__":
     uni_controler = runner()
     command = ""
     while command.strip() != 'exit':
-        #prin_lst(uni_controler.step_list, uni_controler.current)
-
         # showing tree
         print("________ showing steps tree:")
         show_tree(uni_controler)
@@ -362,8 +300,12 @@ if __name__ == "__main__":
         try:
             command = str(input(">>> "))
 
-        except:
+        except KeyboardInterrupt:
             print(" ...tweak key pressed ... quitting")
+            sys.exit(0)
+
+        except EOFError:
+            print(" EOF ...tweak   ... quitting")
             sys.exit(0)
 
         uni_controler.run(command)
