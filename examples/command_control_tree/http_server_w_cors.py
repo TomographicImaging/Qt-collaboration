@@ -44,14 +44,9 @@ class RequestHandler(BaseHTTPRequestHandler):
         self._send_cors_headers()
         self.end_headers()
 
-        url_path = self.path
-        url_dict = parse_qs(urlparse(url_path).query)
-        print("url_path =", url_path)
-        print("url_dict =", url_dict)
         lst_out = build_dict_list(
             uni_controler.step_list, uni_controler.current
         )
-
         self.send_ok_dict(lst_out)
 
     def do_PUT(self):
@@ -78,7 +73,6 @@ class RequestHandler(BaseHTTPRequestHandler):
         post_body = self.rfile.read(content_len)
         body_str = str(post_body.decode('utf-8'))
         url_dict = json.loads(body_str)
-        print("url_dict =", url_dict)
         msg = url_dict['message']
         print("msg =", msg)
         if msg != "":
