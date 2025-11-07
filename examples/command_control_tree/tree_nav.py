@@ -2,38 +2,41 @@ import subprocess, sys, shutil, os, glob
 
 def build_dict_list(lst, curr):
     '''
-    builds the list that either is shown in console on the server side
-    or is sent back to the client. Here we handle format conversion more
-    that the logic of running commands and building the tree.
+    Converts a list of uni_step objects into a list of dictionaries
+    for display or transmission. Handles format conversion, not command logic.
 
-    This function normally gets called when running the HTTP server
+    This function gets called when running the HTTP server, not from CLI app
+
+
+    Args:
+        lst: List of uni_step objects.
+        curr: Current step number.
+
+    Returns:
+        A list of dictionaries representing each step.
+
     '''
     print(" - - - - - building list:")
     lst_stp = []
     for uni in lst:
-        step_dict = {
-            "lin_num":uni.number,
-            "command":str(uni.command[0]),
-            "success":uni.success
-        }
-
         try:
-            step_dict["prev_step"] = int(uni.prev_step.number)
+            previous = int(uni.prev_step.number)
 
         except AttributeError:
-            step_dict["prev_step"] = None
+            previous = None
 
         nxt_lst = []
         for nxt_uni in uni.next_step_list:
             nxt_lst.append(int(nxt_uni.number))
 
-        step_dict["nxt"] = nxt_lst
-
-        if( curr == uni.number ):
-            step_dict["here"] = True
-
-        else:
-            step_dict["here"] = False
+        step_dict = {
+            "lin_num":      uni.number,
+            "command":      str(uni.command[0]),
+            "success":      uni.success,
+            "prev_step":    previous,
+            "nxt":          nxt_lst,
+            "here": curr == uni.number
+        }
 
         lst_stp.append(step_dict)
 
@@ -49,7 +52,6 @@ class show_tree(object):
 
     This way we can show a tree of commands no matter how many ramifications
     the user creates.
-
     '''
     def __init__(self, uni_controler):
         self.lst_nodes = []
@@ -57,16 +59,8 @@ class show_tree(object):
             step = uni_controler.step_list[0],
             curr = uni_controler.current, indent = 1
         )
-
-        for node in self.lst_nodes:
-            col = node["indent"] * 5 + 7
-            for row_num in range(node["parent_row"] + 2, node["my_row"]):
-                str_2_cp_from = str(self.lst_nodes[row_num]["lin2print"])
-                new_str = str_2_cp_from[:col] + "|" + str_2_cp_from[col + 1:]
-                self.lst_nodes[row_num]["lin2print"] = new_str
-
-        for node in self.lst_nodes:
-            print(node["lin2print"])
+        self._add_vertical_connectors()
+        self._print_tree()
 
     def build_recursive_list(
         self, step = None, curr = None, indent = 1, parent_row = 0
@@ -101,6 +95,18 @@ class show_tree(object):
                 step = line, curr = curr,
                 indent = indent + 1, parent_row = my_row
             )
+
+    def _add_vertical_connectors(self):
+        for node in self.lst_nodes:
+            col = node["indent"] * 5 + 7
+            for row_num in range(node["parent_row"] + 2, node["my_row"]):
+                str_line = str(self.lst_nodes[row_num]["lin2print"])
+                updated_str_line = str_line[:col] + "|" + str_line[col + 1:]
+                self.lst_nodes[row_num]["lin2print"] = updated_str_line
+
+    def _print_tree(self):
+        for node in self.lst_nodes:
+            print(node["lin2print"])
 
 
 def run_cmd(cmd_lst, run_dir):
@@ -288,6 +294,7 @@ class runner(object):
     def goto(self, new_lin):
         if new_lin <= self.bigger_lin:
             self.current = new_lin
+
 
 if __name__ == "__main__":
     uni_controler = runner()
