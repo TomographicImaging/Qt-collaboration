@@ -1,19 +1,7 @@
 
 import sys, requests, json, os
 
-try:
-    from PySide6 import QtUiTools
-    from PySide6.QtCore import *
-    from PySide6.QtWidgets import *
-    from PySide6.QtGui import *
-    print("Using PySide6 as Qt bindings")
-
-except ModuleNotFoundError:
-    from PySide2 import QtUiTools
-    from PySide2.QtCore import *
-    from PySide2.QtWidgets import *
-    from PySide2.QtGui import *
-    print("Using PySide2 as Qt bindings")
+from qt_libs import *
 
 def draw_quadratic_bezier_3_points(
         scene_obj, p1x, p1y, p2x, p2y, p3x, p3y, lin_pen

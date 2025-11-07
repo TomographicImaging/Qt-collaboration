@@ -1,20 +1,8 @@
 
 import sys, requests, json, os
+
 import gui_deps
-
-try:
-    from PySide6 import QtUiTools
-    from PySide6.QtCore import *
-    from PySide6.QtWidgets import *
-    from PySide6.QtGui import *
-    print("Using PySide6 as Qt bindings")
-
-except ModuleNotFoundError:
-    from PySide2 import QtUiTools
-    from PySide2.QtCore import *
-    from PySide2.QtWidgets import *
-    from PySide2.QtGui import *
-    print("Using PySide2 as Qt bindings")
+from qt_libs import *
 
 class Form(QObject):
     '''
