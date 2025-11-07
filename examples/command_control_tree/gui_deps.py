@@ -110,8 +110,12 @@ class TreeDirScene(QGraphicsScene):
         except:
             print("last indent =", indent)
 
-    def draw_4_me(self, lst_out):
-        my_lst = lst_out['Answer']
+    def draw_4_me(self, my_lst):
+
+
+        #my_lst = lst_out['Answer']
+        #my_lst = lst_out
+
         self.nod_lst_size = len(my_lst)
         self.tree_data_map = []
         self.max_indent = 0

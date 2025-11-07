@@ -44,14 +44,9 @@ class RequestHandler(BaseHTTPRequestHandler):
         self._send_cors_headers()
         self.end_headers()
 
-        url_path = self.path
-        url_dict = parse_qs(urlparse(url_path).query)
-        print("url_path =", url_path)
-        print("url_dict =", url_dict)
         lst_out = build_dict_list(
             uni_controler.step_list, uni_controler.current
         )
-
         self.send_ok_dict(lst_out)
 
     def do_PUT(self):

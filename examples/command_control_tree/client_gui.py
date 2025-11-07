@@ -45,12 +45,16 @@ class Form(QObject):
 
     def do_get(self):
         print("do_get")
-        full_cmd = {"message":self.req_qr}
         req_get = requests.get(
-            "http://127.0.0.1:45678", params = full_cmd
+            "http://127.0.0.1:45678", params = {"message":"dummy"}
         )
         lst_out = req_get.content
-        self.tree_scene.draw_4_me(json.loads(lst_out))
+
+        print("\n lst_out = \n", lst_out, "\n")
+
+        my_lst = json.loads(lst_out)['Answer']
+
+        self.tree_scene.draw_4_me(my_lst)
 
     def clicked_4_post(self):
         print("time to do a http(Post) request with:", self.req_qr)
