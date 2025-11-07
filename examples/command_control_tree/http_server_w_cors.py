@@ -73,7 +73,6 @@ class RequestHandler(BaseHTTPRequestHandler):
         post_body = self.rfile.read(content_len)
         body_str = str(post_body.decode('utf-8'))
         url_dict = json.loads(body_str)
-        print("url_dict =", url_dict)
         msg = url_dict['message']
         print("msg =", msg)
         if msg != "":

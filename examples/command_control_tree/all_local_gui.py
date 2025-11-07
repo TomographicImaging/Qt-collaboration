@@ -39,10 +39,8 @@ class Form(QObject):
     def clicked_cat(self):
         self.window.EditPostRequestLine.setText("cat")
 
-
     def clicked_4_post(self):
         req_qr = str(self.window.EditPostRequestLine.text())
-        print("time to do a http(Post) request with:", req_qr)
         self.uni_controler.run(req_qr)
         show_tree(self.uni_controler)
         lst_out = build_dict_list(

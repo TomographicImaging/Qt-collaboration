@@ -16,7 +16,6 @@ def build_dict_list(lst, curr):
         A list of dictionaries representing each step.
 
     '''
-    print(" - - - - - building list:")
     lst_stp = []
     for uni in lst:
         try:
@@ -40,7 +39,6 @@ def build_dict_list(lst, curr):
 
         lst_stp.append(step_dict)
 
-    print(lst_stp)
     return lst_stp
 
 

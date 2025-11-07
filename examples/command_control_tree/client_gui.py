@@ -49,15 +49,10 @@ class Form(QObject):
             "http://127.0.0.1:45678", params = {"message":"dummy"}
         )
         lst_out = req_get.content
-
-        print("\n lst_out = \n", lst_out, "\n")
-
         my_lst = json.loads(lst_out)['Answer']
-
         self.tree_scene.draw_4_me(my_lst)
 
     def clicked_4_post(self):
-        print("time to do a http(Post) request with:", self.req_qr)
         full_cmd = {"message":self.req_qr}
         try:
             req_post = requests.post(

@@ -100,27 +100,21 @@ class TreeDirScene(QGraphicsScene):
             "success": stp_suss, "indent":indent, "here":step["here"], "my_row":len(self.tree_data_map), "parent_row":parent_row
         }
         self.tree_data_map.append(step_map)
-        try:
-            print("step =", step)
-            for new_pos in step["nxt"]:
-                self.build_tree_recurs(
-                    new_pos, my_lst, indent + 1, step_map["my_row"]
-                )
+        #try:
+        #print("step =", step)
+        for new_pos in step["nxt"]:
+            self.build_tree_recurs(
+                new_pos, my_lst, indent + 1, step_map["my_row"]
+            )
 
-        except:
-            print("last indent =", indent)
+        #except:
+        #    print("last indent =", indent)
 
     def draw_4_me(self, my_lst):
-
-
-        #my_lst = lst_out['Answer']
-        #my_lst = lst_out
-
         self.nod_lst_size = len(my_lst)
         self.tree_data_map = []
         self.max_indent = 0
         self.build_tree_recurs(0, my_lst, 1, 0);
-        print("self.max_indent =", self.max_indent)
         self.draw_only_tree()
 
     def draw_only_tree(self):
@@ -134,7 +128,6 @@ class TreeDirScene(QGraphicsScene):
         )
 
         for row_num in range(1, self.nod_lst_size + 1, 2):
-            print("row_num =", row_num)
             y_ini = row_num * self.row_height
             y_end = (row_num + 1) * self.row_height
             self.addRect(
