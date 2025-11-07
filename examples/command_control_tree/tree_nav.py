@@ -2,38 +2,41 @@ import subprocess, sys, shutil, os, glob
 
 def build_dict_list(lst, curr):
     '''
-    builds the list that either is shown in console on the server side
-    or is sent back to the client. Here we handle format conversion more
-    that the logic of running commands and building the tree.
+    Converts a list of uni_step objects into a list of dictionaries
+    for display or transmission. Handles format conversion, not command logic.
 
-    This function normally gets called when running the HTTP server
+    This function gets called when running the HTTP server, not from CLI app
+
+
+    Args:
+        lst: List of uni_step objects.
+        curr: Current step number.
+
+    Returns:
+        A list of dictionaries representing each step.
+
     '''
     print(" - - - - - building list:")
     lst_stp = []
     for uni in lst:
-        step_dict = {
-            "lin_num":uni.number,
-            "command":str(uni.command[0]),
-            "success":uni.success
-        }
-
         try:
-            step_dict["prev_step"] = int(uni.prev_step.number)
+            previous = int(uni.prev_step.number)
 
         except AttributeError:
-            step_dict["prev_step"] = None
+            previous = None
 
         nxt_lst = []
         for nxt_uni in uni.next_step_list:
             nxt_lst.append(int(nxt_uni.number))
 
-        step_dict["nxt"] = nxt_lst
-
-        if( curr == uni.number ):
-            step_dict["here"] = True
-
-        else:
-            step_dict["here"] = False
+        step_dict = {
+            "lin_num":      uni.number,
+            "command":      str(uni.command[0]),
+            "success":      uni.success,
+            "prev_step":    previous,
+            "nxt":          nxt_lst,
+            "here": curr == uni.number
+        }
 
         lst_stp.append(step_dict)
 
