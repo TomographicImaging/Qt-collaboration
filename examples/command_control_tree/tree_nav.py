@@ -112,14 +112,19 @@ def run_cmd(cmd_lst, run_dir):
     runs in << run_dir >> the command stored in << cmd_lst >>
     returns in a list the console output and the status of the execution
     '''
+    os_name = os.name
+    if os_name == "nt":
+        do_shell = True
+
+    else:
+        do_shell = False
+
     lst_output = []
-    lst_w_witch = list(cmd_lst)
-    print("__________________________________\n << running >>", lst_w_witch)
+    print("__________________________________\n << running >>", cmd_lst)
     try:
-        lst_w_witch[0] = str(shutil.which(lst_w_witch[0]))
         my_proc = subprocess.Popen(
-            lst_w_witch,
-            shell = False,
+            cmd_lst,
+            shell = do_shell,
             cwd = run_dir,
             stdout = subprocess.PIPE,
             stderr = subprocess.STDOUT,

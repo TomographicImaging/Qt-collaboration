@@ -44,7 +44,7 @@ class Form(QObject):
         self.window.EditPostRequestLine.setText("cat")
 
     def do_get(self):
-        print("do_get")
+        #print("do_get")
         req_get = requests.get(
             "http://127.0.0.1:45678", params = {"message":"dummy"}
         )
