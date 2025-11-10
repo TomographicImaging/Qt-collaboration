@@ -114,9 +114,9 @@ def run_cmd(cmd_lst, run_dir):
     '''
     lst_output = []
     lst_w_witch = list(cmd_lst)
+    lst_w_witch[0] = str(shutil.which(lst_w_witch[0]))
     print("__________________________________\n << running >>", lst_w_witch)
     try:
-        lst_w_witch[0] = str(shutil.which(lst_w_witch[0]))
         my_proc = subprocess.Popen(
             lst_w_witch,
             shell = False,
