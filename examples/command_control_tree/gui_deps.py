@@ -100,15 +100,10 @@ class TreeDirScene(QGraphicsScene):
             "success": stp_suss, "indent":indent, "here":step["here"], "my_row":len(self.tree_data_map), "parent_row":parent_row
         }
         self.tree_data_map.append(step_map)
-        #try:
-        #print("step =", step)
         for new_pos in step["nxt"]:
             self.build_tree_recurs(
                 new_pos, my_lst, indent + 1, step_map["my_row"]
             )
-
-        #except:
-        #    print("last indent =", indent)
 
     def draw_4_me(self, my_lst):
         self.nod_lst_size = len(my_lst)

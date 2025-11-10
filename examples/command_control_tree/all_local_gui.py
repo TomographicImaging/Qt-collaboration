@@ -1,5 +1,5 @@
 
-import sys, requests, json, os
+import sys, os
 
 import gui_deps
 from qt_libs import *

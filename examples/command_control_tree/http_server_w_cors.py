@@ -6,7 +6,6 @@ from tree_nav import runner, show_tree, build_dict_list
 
 """ The HTTP request handler """
 class RequestHandler(BaseHTTPRequestHandler):
-
     '''
     connects http requests with the only instance of << runner >>.
     side of the control tree.
@@ -16,7 +15,6 @@ class RequestHandler(BaseHTTPRequestHandler):
     web browsers that enforce the << cross origin resource sharing >>
     rules
     '''
-
     def _send_cors_headers(self):
         ''' Sets headers required for CORS '''
         self.send_header("Access-Control-Allow-Origin", "*")
